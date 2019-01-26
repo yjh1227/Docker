@@ -105,6 +105,7 @@ Docker利用容器（Container）独立运行的一个或一组应用。容器�
 
 
 # 3.仓库
+仓库：每个仓库存放某一类镜像。
 
 # 4.小总结
 
@@ -309,3 +310,186 @@ $ docker run -i -t  -p 8081:8080  mycentos:0.1
 $ docker build -t myimage:v1 .
 ```
 -t ：指定镜像名称和标签，格式为'name:tag' .: 最后一个点代表当前目录，也可以换成其它的路径
+
+### 容器命令
+下载一个Centos镜像演示
+```
+docker pull centos
+centos              latest              ab9a80ab07d0        7 weeks ago         201.8 MB
+//centos为什么这么小，因为精简，这就是docker的好处。
+```
+## 新建并启动容器
+
+```
+命令格式：
+docker run [OPTIONS]IMAGE[COMMAND][ARG...]
+
+      OPTIONS说明(常用) :有些是一个减号，有些是两个减号
+
+      --name="容器新名字":为容器指定一个名称;
+
+      -d:后台运行容器，并返回容器ID，也即启动守护式容器;
+      -i: 以交互模式运行容器，通常与-t同时使用;
+
+      -t: 为容器重新分配一个伪输入终端，通常与-i同时使用;
+      -P: 随机端口映射;
+
+      -p: 指定端口映射， 有以下四种格式
+
+      ip:hostPort:containerPort
+      ip::containerPort
+
+      hostPort:containerPort
+      containerPort
+```
+
+## 列出当前所有正在运行的容器
+```
+docker ps [OPTIONS]
+OPTIONS说明(常用)
+-a:列出当前所有正在运行的容器+历史上运行过的
+-|:显示最近创建的容器。  
+-n:显示最近n个创建的容器器。
+-q :静默模式,只显示容器编号。
+--no-trunc :不截断输出。
+
+```
+## 退出容器
+```
+两种推迟方式：
+1、exit  容器停止推出
+2、Ctrl+p+q  容器不停止推出
+```
+## 启动容器
+```
+docker start 容器ID或者容器名
+```
+## 重启容器
+```
+docker restart 容器ID或者容器名
+```
+## 停止容器
+```
+docker stop 容器ID或者容器名  //慢慢的停止
+```
+## 强制停止容器
+```
+docker kill 容器ID或者容器名  //相当于直接拔电源
+```
+## 删除已停止的容器
+```
+docker rm 容器ID //先用docker ps -n 2  查看删除的容器信息   docker rm -f（强制）
+
+一次性删除多个已停止的容器：（和批量删除镜像一回事）
+docker rm -f $(docker ps -a -q)
+docker ps -a -q | xargs docker rm   //其中xargs为可变参数
+```
+
+演示：
+```
+[root@yujunhui1254094880 ~]# docker run -it ab9a80ab07d0
+[root@8a040969c127 /]# ls
+anaconda-post.log  dev  home  lib64  mnt  proc  run   srv  tmp  var
+bin                etc  lib   media  opt  root  sbin  sys  usr
+[root@8a040969c127 /]# pwd
+
+
+```
+### 重要
+## 启动守护式容器
+```
+语法：docker run -d 容器名
+
+
+#使用镜像centos:latest以后台模式启动一个容器
+docker run -d centos  
+
+问题:然后docker ps -a进行查看，会发现容器已经退出
+
+很重要的要说明的一点: Docker容器后台运行，就必须有一一个前台进程。
+
+容器运行的命令如果不是那些一直挂起的命令 (比如运行top, tail) ，就是会自动退出的。
+
+这个是docker的机制问题，比如你的web容器，我们以nginx为例，正常情况下，我们配置启动服务只需要启动响应的service即可。例如service nginx start
+
+但是，这样做,nginx为后台进程模式运行,就导致docker前台没有运行的应用，这样的容器后台启动后，会立即自杀因为他觉得他没事可做了.
+
+所以，最佳的解决方案是将你要运行的程序以前台进程的形式运行
+
+
+
+[root@yujunhui1254094880 ~]# docker run -d centos
+368a46f76cefe7f807a7324595c5c749d16c70699c7ddc6a66ec5ca20d471864
+[root@yujunhui1254094880 ~]# 
+[root@yujunhui1254094880 ~]# 
+[root@yujunhui1254094880 ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+发现并没有出现差异（docker机制问题）
+
+若是前台有消息打印，则此时就不会自杀。例如：
+[root@yujunhui1254094880 ~]# docker run -d centos /bin/sh -c "while true;do echo hello yjh;sleep 2;done"
+0cd846765ea5bb14a072ac857bcaa3279f2fe179dee6204fc4f4d574623e3c18
+[root@yujunhui1254094880 ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS               NAMES
+0cd846765ea5        centos              "/bin/sh -c 'while t   9 seconds ago       Up 8 seconds                            drunk_banach        
+939bbdc6382c        centos              "/bin/bash"            4 minutes ago       Up 4 minutes                            distracted_wilson 
+```
+
+## 查看容器日志
+```
+docker logs -f -t --tail+数字 容器ID  //-t 是加入时间戳，-f跟随最新的日志打印，--tail+数字：显示最后多少条
+
+[root@yujunhui1254094880 ~]# docker logs 0cd846765ea5
+hello yjh
+hello yjh
+hello yjh
+hello yjh
+
+加入-t：
+[root@yujunhui1254094880 ~]# docker logs -t f493f1b43747
+2019-01-26T07:22:49.187206774Z hello yjh
+2019-01-26T07:22:51.188987347Z hello yjh
+2019-01-26T07:22:53.190232697Z hello yjh
+
+加入-f：
+[root@yujunhui1254094880 ~]# docker logs -t -f f493f1b43747
+2019-01-26T07:22:49.187206774Z hello yjh
+2019-01-26T07:22:51.188987347Z hello yjh
+2019-01-26T07:22:53.190232697Z hello yjh
+2019-01-26T07:22:55.191489260Z hello yjh
+
+[root@yujunhui1254094880 ~]# docker logs -t -f --tail 3 f493f1b43747
+2019-01-26T07:26:19.313571960Z hello yjh
+2019-01-26T07:26:21.314891170Z hello yjh
+2019-01-26T07:26:23.316169976Z hello yjh
+
+```
+## 查看容器内运行的进程
+```
+docker top 容器ID
+```
+## 查看容器内部细节
+```
+docker inspect 容器ID
+```
+## 进入正在运行的容器并以命令行交互
+```
+docker exec -it 容器ID bashShell
+重新进入docker attach容器ID
+上述两个区别：
+attach：直接进入容器启动命令的终端，不会启动心得进程
+exec：是在容器中打开新的终端，并且可以启动新的进程
+
+演示：
+[root@yujunhui1254094880 ~]# docker run -it centos /bin/bash
+
+[root@yujunhui1254094880 ~]# docker attach 5cde90cd89e7
+
+[root@yujunhui1254094880 ~]# docker exec -t 5cde90cd89e7 ls /tmp   //直接得到结果不进入
+ks-script-h2MyUP  yum.log
+
+```
+## 从容器内拷贝文件到主机上
+```
+docker cp 容器ID:容器内路径 目的主机路径
+```
