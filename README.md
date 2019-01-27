@@ -562,3 +562,25 @@ f595459ab77e        tomcat              "catalina.sh run"   3 seconds ago       
 ![image](image/commit操作.PNG) 
 
 ## 4.启动我们的新镜像并和原来的对比
+1.启动yjh/tomcat02，它没有docs
+![image](image/对比1.PNG)
+
+2.新启动原来的tomcat，有docs  
+
+![image](image/对比2.PNG)
+
+## 补充
+```
+守护式（无打印信息）
+后台方式启动：docker run -d -p 6666:8080 tomcat
+```
+
+### Docker容器数据卷
+
+## 是什么？
+
+## 能干吗？
+
+## 数据卷
+
+## 数据容器卷
