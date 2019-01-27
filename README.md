@@ -610,10 +610,67 @@ docker inspect 容器ID //查看打印信息，Volumes
 
 2.DockerFile添加
 
+2.1：根目录下新建mydocker文件夹并进入
+
+2.2：可在Dockerfile中使用VOLUME指令来给镜像添加一个或多个数据卷
+
+![image](image/5.7.png)
+
+2.3：File构建
+
+![image](image/5.8.png)
+
+2.4：build后生成镜像           获得一个新镜像zzyy/centos
+
+![image](image/5.9.png)
+
+2.5:run容器
+
+![image](image/5.10.png)
+
+2.6：通过上述步骤，容器内的卷目录地址已经知道，对应的主机目录地址哪？
+
+2.7：主机对应默认地址
+    查看方式：docker inspect
+
+![image](image/5.11.png)
 
 备注：
 
+![image](image/5.12.png)
 
-
+![image](image/5.13.png)
 
 ## 数据容器卷
+1.是什么？    
+    命名的容器挂载数据卷，其他容器通过挂载这个（父容器）实现数据共享，挂载数据卷的容器，称之为数据卷容器。
+    通俗来讲就是“活动硬盘上挂活动硬盘，实现数据的传递依赖。”
+
+2.总体介绍  
+  2.1.以上一步新建的镜像zzyy/centos为模板并运行容器dc01/dc02/dc03    
+  2.2.它们已经具有容器卷：/dataVolumeContainer1和/dataVolumeContainer2
+
+3.容器间传递共享（--volumes-from）   
+3.1：先启动一个父容器dc01，在dataVolumeContainer2新增内容
+
+![image](image/5.14.png)
+
+3.2：dc02/dc03继承dc01.
+    
+    ```
+    --volumes-from
+    命令：        dc02/dc03分别在dataVolumeContainer2各自新增内容
+    ```
+3.3：回到dc01可以看到02/03各自添加的都能共享了
+
+3.4：删除dc01,dc02修改dc03可否访问
+    答：可以，因为数据共享    
+    
+3.5：删除dc02后dc03可否访问
+    3.4.1:再进一步：
+    ![image](image/5.15.png)
+
+3.6：新建dc04继承dc03后再删除dc03
+![image](image/5.16.png)
+
+结论：容器之间配置信息的传递，数据卷的生命周期一直持续到没有容器使用它为止。
