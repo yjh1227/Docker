@@ -578,9 +578,42 @@ f595459ab77e        tomcat              "catalina.sh run"   3 seconds ago       
 ### Docker容器数据卷
 
 ## 是什么？
-
+一句话：有点类似Redis里面的rdb和aof文件
+![image](image/5.1.png)
 ## 能干吗？
+1.容器的持久化  
+2.容器间继承+共享数据  
 
+![image](image/5.2.png)
 ## 数据卷
+容器内添加方法：  
+1.直接命令添加  
+
+1.1:命令：docker run -it -v /宿主机绝对路径目录:/容器内目录 镜像名
+
+![image](image/5.3.png)
+
+1.2:查看数据卷是否共享成功
+
+docker inspect 容器ID //查看打印信息，Volumes
+
+![image](image/5.4.png)
+
+1.3：容器和宿主机之间数据共享
+![image](image/5.5.png)
+1.4：容器停止退出后，主机修改后数据是否同步  
+     答：会同步，全量数据同步的拉去动作
+![image](image/5.6.png)
+
+1.5：命令（带权限）
+     docker run -it -v /宿主机绝对路径目录:/容器内目录:ro 镜像名   //ro:read only
+
+2.DockerFile添加
+
+
+备注：
+
+
+
 
 ## 数据容器卷
