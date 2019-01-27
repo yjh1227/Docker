@@ -494,3 +494,71 @@ ks-script-h2MyUP  yum.log
 ```
 docker cp 容器ID:容器内路径 目的主机路径
 ```
+
+
+
+### Docker镜像
+## 是什么
+镜像是一种轻量级、可执行的独立软件包，用来打包软件运行环境和基于运行环境开发的软件，它包含运行某个软件所需的所有内容，包括代码、运行时、库、环境变量和配置文件。
+
+# UnionFs(联合文件系统)
+UnionFS (联合文件系统) : Union文件系统(UnionFS) 是一种分层、轻量级并且高性能的文件系统，它支持对文件系统的修改作为一次提交来一层层的叠加，同时可以将不同目录挂载到同一个虚拟文件系统下(unite several directories into a single√irtual filesystem)。Union文件系统是Docker镜像的基础。镜像可以通过分层来进行继承，基于基础镜像(没有父镜像)，可以制作各种具体的应用镜像。
+
+特性: 一次同时加载多个文件系统，但从外面看起来，只能看到一个文件系统，联合加载会把各层文件系统叠加起来，这样最终的文件系统会包含所有底层的文件和目录。
+
+# Docker镜像加载原理
+
+docker的镜像实际上由一层一层的文件系统组成，这种层级的文件系统UnionFS。
+
+bootfs(boot file system)主要包含bootloader和kernel, bootloader主要是引导加载kernel, Linux刚启动时会加载bootfs文件系统，在
+
+Docker饒像的最底层是bootfs.这一层与我们典型的Linux/Unix系统是一"样的，包含bot加载器和内核。当boot加载完成之后整个内核就都在内存中了，此时内存的使用权已由bootfs转交给内核，此时系统也会卸载bootfs。
+
+rootfs(rootfilesystem)，在bootfs之上。包含的就是典型Linux系统中的/dev,/proc,/bin,/etc等标准目录和文件。roofs就是各种不同的操作系统发行版，比如Ubuntu, Centos 等等。
+
+# 分层的镜像
+以pull为例，在下载可以看到docker的镜像好像是一层一层在下载
+
+# 为什么Docker镜像要采用这种分层结构呢
+最大的好处就是-共享资源
+
+比如：有多个镜像都从相同额base镜像构建而来，那么宿主机只需要在磁盘上保存一份base镜像，同时内存中也只需要加载一份base镜像，就可以为所有容器服务了，而且镜像的每一层都可以被共享。
+
+## 特点
+docker镜像都是只读的，当容器启动时，一个新的可写层被加载到镜像的顶部。这一层通常被称作“容器层”，“容器层”之下的都叫“镜像层”。
+
+## Docker镜像的commit操作补充
+docker commit提交容器副本使之成为一个新的镜像
+
+docker commit -m="提交的描述信息" -a="作者" 容器ID要创建的目标镜像名:[标签名]
+
+
+### 案例演示
+## 1.从Hub上下载tomcat镜像到本地并成功运行
+```
+1；指定分配端口
+docker run -it -p 8080:8080 tomcat    
+//-p：主机端口，-P：随机分配端口，i：交互，t：终端
+
+[root@yujunhui1254094880 ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                              NAMES
+c7b7360486b2        tomcat              "catalina.sh run"   6 seconds ago       Up 5 seconds        8080/tcp, 0.0.0.0:8089->8089/tcp   suspicious_perlman   
+5cde90cd89e7        centos              "/bin/bash"         22 hours ago        Up 22 hours                                            evil_ba
+
+2.随机分配端口
+docker run -it -P tomcat 
+
+[root@yujunhui1254094880 ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                     NAMES
+f595459ab77e        tomcat              "catalina.sh run"   3 seconds ago       Up 2 seconds        0.0.0.0:32768->8080/tcp   suspicious_kirch    
+5cde90cd89e7        centos              "/bin/bash"         22 hours ago        Up 22 hours                                   evil_bardeen  
+
+```
+
+## 2.故意删除上一步镜像生产的tomcat容器的文档
+![image](image/删除操作.png) 
+![image](image/删除操作2.PNG) 
+## 3.也即当前的tomcat运行实例是一个没有文档内容的容器，以它作为模板commit一个没有doc的tomcat新镜像yjh/tomcat02
+![image](image/commit操作.PNG) 
+
+## 4.启动我们的新镜像并和原来的对比
