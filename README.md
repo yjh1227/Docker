@@ -71,6 +71,11 @@
         - 2.DockerFile添加
     - 5.9、数据容器卷
   - 第六部分-DockerFile解析
+    - 6.1是什么
+    - 6.2DockerFile构建过程解析
+    - 6.3DockerFile体系结构
+    - 案例
+    - 小总结
 
 <!-- /MarkdownTOC -->
 
@@ -764,4 +769,21 @@ docker build -f /mydocker/File -t yjh/centos .
 
 ## 第六部分-DockerFile解析
 
+### 6.1是什么
+Dockerfile是用来构建Docker镜像的构建文件，是由一系列的命令和参数构成的脚本。
 
+构建三步骤：编写Dockerfile文件，docker build，docker run
+
+文件什么样？
+
+以我们熟悉的centos为例
+
+![image](image/5.17.png)
+
+### 6.2DockerFile构建过程解析
+
+### 6.3DockerFile体系结构
+
+### 案例
+
+### 小总结
