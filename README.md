@@ -73,8 +73,20 @@
   - 第六部分-DockerFile解析
     - 6.1是什么
     - 6.2DockerFile构建过程解析
+      - 6.2.1、Dockerfile内容基础知识
+      - 6.2.2、Docker执行Dockerfile的大致流程
+      - 小总结
     - 6.3DockerFile体系结构
+      - 保留字指令
     - 案例
+      - 1：Base镜像（scratch）
+      - 2：自定义镜像mycentos
+        - 2.1、编写
+        - 2.2、构建
+        - 2.3、运行
+        - 2.4、列出镜像的变更历史
+      - 3：CMD/ENTRYPOINT镜像案例
+      - 4：自定义镜像Tomcat9
     - 小总结
 
 <!-- /MarkdownTOC -->
@@ -781,9 +793,79 @@ Dockerfile是用来构建Docker镜像的构建文件，是由一系列的命令�
 ![image](image/5.17.png)
 
 ### 6.2DockerFile构建过程解析
+#### 6.2.1、Dockerfile内容基础知识
+```
+1:每条保留字指令必须为大写字母且后面要跟随至少一个参数
+2：指令按照从上到下，顺序执行
+3：#表示注释
+4：每条指令都会创建一个新的镜像层，并对镜像进行提交
+```
 
+#### 6.2.2、Docker执行Dockerfile的大致流程
+```
+1：docker从基础镜像运行一个容器
+2：执行一条指令并对容器做出修改
+3：执行类似docker commit的操作提交一个新的镜像层
+4：docker再基于刚提交的镜像运行一个新容器
+5：执行dockerfile中的下一条指令直到所有指令都执行完成
+```
+#### 小总结
+![image](image/5.18.png)
+![image](image/5.19.png)
 ### 6.3DockerFile体系结构
+#### 保留字指令
+```
+FROM：基础镜像，当前新镜像是基于哪个镜像的
+MAINTAINER：镜像维护者的姓名和邮箱地址
+RUN：容器构建时需要运行的命令
+EXPOSE：当前容器对外暴露的端口号
+WORKDIR：指定在创建文件后，终端默认登陆进来工作目录，一个落脚点
+ENV：用来在构建镜像过程中设置环境变量。
+```
+![image](image/5.20.png)
+```
+ADD：将苏主机目录下的文件拷贝进镜像且ADD命令会自动处理URL和解压tar压缩包
+COPY：类似ADD，拷贝文件和目录到镜像中。
+      将从构建上下文目录中<源路径>的文件/目录复制到新的一层镜像内的<目标路径位置>
+      COPY src dest
+      COPY ["src","dest"]
+VOLUME：容器数据卷，用于数据保存和持久化工作
+CMD：指定一个容器启动时要运行的命令
+     Dockerfile中可以有多个CMD指令，但只有最后一个生效，CMD会被docker run之后的参数替换
+```
+![image](image/5.21.png)
+![image](image/5.22.png)
+```
+ENTRYPOINT：指定一个容器启动时要运行的命令
+            ENTRYPOINT和CMD一样，都是在指定容器启动程序及参数(意思就是此时ENTRYPOINT不会覆盖后面语句，而是追加在后面)
+
+ONBUILD：当构建一个被继承的Dockerfile时运行命令，父镜像被子继承后父镜像的onbuild被触发
+```
+小总结:
+
+![image](image/5.23.png)
 
 ### 案例
+#### 1：Base镜像（scratch）
+Docker Hub中99%的镜像都是通过在base镜像中安装和配置需要的软件构建出来的
+
+![image](image/5.24.png)
+
+#### 2：自定义镜像mycentos
+##### 2.1、编写
+Hub默认CentOS镜像什么情况
+
+![image](image/5.25.png)
+
+准备编写DockerFile文件
+
+myCentOS内容DockerFile
+##### 2.2、构建
+##### 2.3、运行
+##### 2.4、列出镜像的变更历史
+
+#### 3：CMD/ENTRYPOINT镜像案例
+#### 4：自定义镜像Tomcat9
 
 ### 小总结
+
