@@ -67,7 +67,10 @@
       - 是什么？
       - 能干吗？
       - 数据卷
+        - 1.直接命令添加
+        - 2.DockerFile添加
     - 5.9、数据容器卷
+  - 第六部分-DockerFile解析
 
 <!-- /MarkdownTOC -->
 
@@ -657,7 +660,7 @@ f595459ab77e        tomcat              "catalina.sh run"   3 seconds ago       
 ![image](image/5.2.png)
 #### 数据卷
 容器内添加方法：  
-1.直接命令添加  
+##### 1.直接命令添加  
 
 1.1:命令：docker run -it -v /宿主机绝对路径目录:/容器内目录 镜像名
 
@@ -677,8 +680,11 @@ docker inspect 容器ID //查看打印信息，Volumes
 
 1.5：命令（带权限）
      docker run -it -v /宿主机绝对路径目录:/容器内目录:ro 镜像名   //ro:read only
+     ![image](image/5.6.1.png)
 
-2.DockerFile添加
+此时无权限在容器内修改共享文件。
+
+##### 2.DockerFile添加
 
 2.1：根目录下新建mydocker文件夹并进入
 
@@ -687,10 +693,21 @@ docker inspect 容器ID //查看打印信息，Volumes
 ![image](image/5.7.png)
 
 2.3：File构建
+```
+# volume test
+FROM centos
+VOLUME ["/dataVolumeContainer","/dataVolumeContainer2"]
+CMD echo “finish,------------success”
+CMD /bin/bash
+
+```
 
 ![image](image/5.8.png)
 
-2.4：build后生成镜像           获得一个新镜像zzyy/centos
+2.4：build后生成镜像           获得一个新镜像yjh/centos
+```
+docker build -f /mydocker/File -t yjh/centos .
+```
 
 ![image](image/5.9.png)
 
@@ -744,3 +761,7 @@ docker inspect 容器ID //查看打印信息，Volumes
 ![image](image/5.16.png)
 
 结论：容器之间配置信息的传递，数据卷的生命周期一直持续到没有容器使用它为止。
+
+## 第六部分-DockerFile解析
+
+
