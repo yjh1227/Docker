@@ -859,12 +859,69 @@ Hub默认CentOS镜像什么情况
 
 准备编写DockerFile文件
 
+![image](image/5.26.png)
+
 myCentOS内容DockerFile
+```
+FROM centos
+MAINTAINER 1254094880@qq.com>
+
+ENV MYPATH /usr/local
+WORKDIR $MYPATH
+
+RUN yum -y install vim
+RUN yum -y install net-tools
+
+EXPOSE 80
+
+CMD echo $MYPATH
+CMD echo "success-------ok"
+CMD /bin/bash
+
+```
+
 ##### 2.2、构建
+docker build -t 新镜像名字:TAG .     //也可以：docker build -f /DockerFIle文件 -t mycentos：1.3 .
+
+![image](image/5.27.png)
 ##### 2.3、运行
+docker run -it 新镜像名字:TAG
+
 ##### 2.4、列出镜像的变更历史
+docker history 镜像名
 
 #### 3：CMD/ENTRYPOINT镜像案例
+都是指定一个容器启动时要运行的命令
+
+CMD
+```
+Dockerfile中可以有多个CMD指令，但只有最后一个生效，CMD会被docker run之后的参数替换
+例子：tomcat的讲解演示：
+docker run -it -p 7777:8080 tomcat ls -l   //此时tomcat并没有启动，因为命令覆盖了
+```
+
+ENTRYPOINT
+```
+docker run之后的参数会被当做参数传递给ENTRYPOINT，之后形成新的命令组合
+
+例子:
+制作CMD版可以查询IP信息的容器:
+curl命令解释：
+```
+![image](image/5.28.png)
+
+![image](image/5.29.png)
+
+问题   如果我们希望显示HTTP头信息，就需要加上-i参数
+
+![image](image/5.30.png)
+
+WHY报错。答：CMD覆盖了，失效
+![image](image/5.31.png)
+
+制作ENTRYPOINT版查询IP信息的容器
+![image](image/5.32.png)
+
 #### 4：自定义镜像Tomcat9
 
 ### 小总结
