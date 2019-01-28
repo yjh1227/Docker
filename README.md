@@ -922,6 +922,9 @@ WHY报错。答：CMD覆盖了，失效
 制作ENTRYPOINT版查询IP信息的容器
 ![image](image/5.32.png)
 
+ONBUILD：当构建一个被继承的Dockerfile时运行命令，父镜像被子继承后父镜像的onbuild被触发
+![image](image/5.33.png)
+
 #### 4：自定义镜像Tomcat9
 
 ### 小总结
