@@ -88,6 +88,11 @@
       - 3：CMD/ENTRYPOINT镜像案例
       - 4：自定义镜像Tomcat9
     - 小总结
+- 第七部分-Docker常用安装
+  - 1、总体步骤
+  - 2、安装tomcat
+  - 3、安装mysql
+  - 4、安装Redis
 
 <!-- /MarkdownTOC -->
 
@@ -926,6 +931,99 @@ ONBUILD：当构建一个被继承的Dockerfile时运行命令，父镜像被子
 ![image](image/5.33.png)
 
 #### 4：自定义镜像Tomcat9
+```
+1、mkdir -p /zzyyuse/mydockerfile/tomcat9
+
+2、在上述目录下touch c.txt
+
+3、将jdk和tomcat安装的压缩包拷贝进上一步目录
+    apach-tomcat-9.0.8.tar.gz
+    jdk-8u171-linux-x64.tar.gz
+4、在/zzyyuse/mydockerfile/tomcat9目录下新建Dockerfile文件，目录内容为：
+```
+![image](image/5.34.png)
+
+![image](image/5.35.png)
+
+5、构建
+
+![image](image/5.37.png)
+
+构建完成
+
+![image](image/5.36.png)
+
+6、run
+
+![image](image/5.38.png)
+
+7、验证
+
+![image](image/5.39.png)
+
+8、结合前述的容器卷将测试的web服务test发布
+
+总体概述
+
+![image](image/5.40.png)
+
+web.xml
+
+![image](image/5.41.png)
+
+a.jsp
+
+![image](image/5.42.png)
+
+测试
+
+![image](image/5.43.png)
+
+这样做的好处是主机改了代码，由于主机和容器的数据共享，主机内容改了，相应的docker容器的内容也改了，方便了开发。
 
 ### 小总结
+![image](image/5.44.png)
 
+# 第七部分-Docker常用安装
+## 1、总体步骤
+```
+1、搜索镜像
+2、拉取镜像
+3、查看镜像
+4、启动镜像
+5、停止容器
+6、移除容器
+```
+## 2、安装tomcat
+docker hub上查找tomcat镜像:`docker search tomcat`
+
+从docker hub上拉取tomcat镜像到本地:
+```
+docker pull tomcat
+1、官网命令
+2、拉取完成
+```
+docker images查看是否有拉取到的tomcat
+
+![image](image/5.45.png)
+
+使用tomcat镜像创建容器（也叫运行镜像）
+```
+docker run -it -p 8080:8080 tomcat //-p:主机端口：docker容器端口
+                                     -P：随机分配端口
+                                     i：交互
+                                     t：终端
+```
+
+## 3、安装mysql
+docker hub上面查找mysql镜像
+```
+docker search mysql
+```
+![image](image/5.46.png)
+
+从docker hub上（阿里云加速器）拉取mysql镜像到本地标签为5.6
+
+使用mysql5.6镜像创建容器（也叫运行镜像）
+
+## 4、安装Redis
