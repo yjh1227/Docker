@@ -89,15 +89,21 @@
       - 4：自定义镜像Tomcat9
     - 小总结
 - 第七部分-Docker常用安装
-  - 1、总体步骤
-  - 2、安装tomcat
-  - 3、安装mysql
-  - 4、安装Redis
+  - 7.1、总体步骤
+  - 7.2、安装tomcat
+  - 7.3、安装mysql
+  - 7.4、安装Redis
 - 第八部分-本地镜像发布到阿里云
-  - 1、本地镜像发布到阿里云的流程
-  - 2、镜像的生成方法
-  - 3、将本地镜像推送到阿里云
-  - 4、将阿里云上的镜像下载到本地
+  - 8.1、本地镜像发布到阿里云的流程
+  - 8.2、镜像的生成方法
+  - 8.3、将本地镜像推送到阿里云
+    - 8.3.1、本地镜像素材原型
+    - 8.3.2、阿里云开发者平台
+    - 8.3.3、创建仓库镜像
+    - 8.3.4、将镜像推送到registry
+    - 8.3.5、公有云可以查询到
+    - 8.3.6、查看详情
+  - 8.4、将阿里云上的镜像下载到本地
 
 <!-- /MarkdownTOC -->
 
@@ -990,7 +996,7 @@ a.jsp
 ![image](image/5.44.png)
 
 # 第七部分-Docker常用安装
-## 1、总体步骤
+## 7.1、总体步骤
 ```
 1、搜索镜像
 2、拉取镜像
@@ -999,7 +1005,7 @@ a.jsp
 5、停止容器
 6、移除容器
 ```
-## 2、安装tomcat
+## 7.2、安装tomcat
 docker hub上查找tomcat镜像:`docker search tomcat`
 
 从docker hub上拉取tomcat镜像到本地:
@@ -1020,7 +1026,7 @@ docker run -it -p 8080:8080 tomcat //-p:主机端口：docker容器端口
                                      t：终端
 ```
 
-## 3、安装mysql
+## 7.3、安装mysql
 docker hub上面查找mysql镜像
 ```
 docker search mysql
@@ -1055,7 +1061,7 @@ docker exec -it MySQL运行成功后的容器ID /bin/bash
 docker exec mysql服务器ID sh -c 'exec mysqldump --all-databases -uroot -p"123456"'> /zzyyuse/all-databases.sql
 ```
 
-## 4、安装Redis
+## 7.4、安装Redis
 从docker hub上（阿里云加速器）拉取redis镜像到本地标签为3.2
 
 ![image](image/5.50.png)
@@ -1085,9 +1091,33 @@ redis.conf
 测试持久化文件生成
 
 # 第八部分-本地镜像发布到阿里云
-## 1、本地镜像发布到阿里云的流程
+## 8.1、本地镜像发布到阿里云的流程
 阿里云ESC Docker生态如下图所示：
+
 ![image](image/5.54.png)
-## 2、镜像的生成方法
-## 3、将本地镜像推送到阿里云
-## 4、将阿里云上的镜像下载到本地
+
+## 8.2、镜像的生成方法
+1、前面的DockerFile    
+2、从容器创建一个新的镜像`docker commit [PTIONS] 容器ID [RESPOSITORY[:TAG]]`
+
+![image](image/5.55.png)
+## 8.3、将本地镜像推送到阿里云
+### 8.3.1、本地镜像素材原型
+![image](image/5.56.png)
+### 8.3.2、阿里云开发者平台
+https://dev.aliyun.com/search.html
+### 8.3.3、创建仓库镜像
+命名空间，仓库名称
+
+![image](image/5.57.png)
+
+### 8.3.4、将镜像推送到registry
+![image](image/5.58.png)
+
+### 8.3.5、公有云可以查询到
+![image](image/5.59.png)
+
+### 8.3.6、查看详情
+
+## 8.4、将阿里云上的镜像下载到本地
+![image](image/5.60.png)
