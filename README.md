@@ -93,6 +93,11 @@
   - 2、安装tomcat
   - 3、安装mysql
   - 4、安装Redis
+- 第八部分-本地镜像发布到阿里云
+  - 1、本地镜像发布到阿里云的流程
+  - 2、镜像的生成方法
+  - 3、将本地镜像推送到阿里云
+  - 4、将阿里云上的镜像下载到本地
 
 <!-- /MarkdownTOC -->
 
@@ -1024,6 +1029,65 @@ docker search mysql
 
 从docker hub上（阿里云加速器）拉取mysql镜像到本地标签为5.6
 
+![image](image/5.47.png)
+
 使用mysql5.6镜像创建容器（也叫运行镜像）
 
+使用mysql镜像
+```
+
+docker run -p 12345:3306 --name mysql -v /zzyyuse/mysql/conf:/etc/mysql/conf.d -v /zzyyuse/mysql/logs:/logs -v /zzyyuse/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.6
+
+```
+
+![image](image/5.48.png)
+
+```
+开始交互运行：
+docker exec -it MySQL运行成功后的容器ID /bin/bash
+```
+![image](image/5.49.png)
+
+外部win10也来连接运行在docker上的mysql服务
+
+数据备份
+```
+docker exec mysql服务器ID sh -c 'exec mysqldump --all-databases -uroot -p"123456"'> /zzyyuse/all-databases.sql
+```
+
 ## 4、安装Redis
+从docker hub上（阿里云加速器）拉取redis镜像到本地标签为3.2
+
+![image](image/5.50.png)
+
+使用redis3.2镜像创建容器（也叫运行镜像）
+
+使用镜像
+```
+docker run -p 6379:6379 -v /zzyyuse/myredis/data:/data -v /zzyyuse/myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf -d redis:3.2 redis-server /usr/local/etc/redis/redis.con --appendonly yes 
+
+```
+![image](image/5.51.png)
+
+在主机/zzyyuse/myredis/conf/redis.conf目录下新建redis.conf文件
+`vim /zzyyuse/myredis/conf/redis.conf/redis.conf`
+```
+redis.conf
+```
+把如下位置注释掉，不要绑定本机，在容器卷说法中，没有绑定死这种说法
+
+![image](image/5.52.png)
+
+测试redis-cli连接上来
+
+![image](image/5.53.png)
+
+测试持久化文件生成
+
+# 第八部分-本地镜像发布到阿里云
+## 1、本地镜像发布到阿里云的流程
+阿里云ESC Docker生态如下图所示：
+![image](image/5.54.png)
+## 2、镜像的生成方法
+## 3、将本地镜像推送到阿里云
+## 4、将阿里云上的镜像下载到本地
